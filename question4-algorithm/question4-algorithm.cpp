@@ -9,6 +9,10 @@
 
 using namespace std;
 
+int *base = NULL;
+
+
+// https://www.geeksforgeeks.org/stack-permutations-check-if-an-array-is-stack-permutation-of-other/
 bool checkStackPermutation(int ip[], int op[], int n)
 {
 	// Input queue 
@@ -51,28 +55,33 @@ bool checkStackPermutation(int ip[], int op[], int n)
 	return (input.empty() && tempStack.empty());
 }
 
-void gen(vector<int> & permutation, int level, int n)
+void swap(int *x, int *y)
 {
+	int temp;
+	temp = *x;
+	*x = *y;
+	*y = temp;
+}
+
+void permute(int *a, int l, int r) {
 	int i;
-	int input[] = { 1, 2 };
-	
-	if (level == n + 1)
-	{
-		if (checkStackPermutation(input, permutation.data(), n)) {
-			for (i = 0; i < n; i++) {
-				cout << permutation[i];
+	if (l == r) {
+		if (checkStackPermutation(base, a, r+1)) {
+			for (i = 0; i <= r; i++) {
+				cout << a[i];
 			}
 			cout << endl;
 		}
-		
+		else {
+			cout << endl;
+		}
+		//std::cout << a << std::endl;
 	}
-	else
-	{
-		for (i = 0; i < level; i++)
-		{
-			vector<int>  p(permutation);   //What does this do?
-			p.insert(p.begin() + i, level);	  //And what is happening here?
-			gen(p, level + 1, n);
+	else {
+		for (i = l; i <= r; i++) {
+			swap((a + l), (a + i));
+			permute(a, l + 1, r);
+			swap((a + l), (a + i));
 		}
 	}
 }
@@ -80,11 +89,27 @@ void gen(vector<int> & permutation, int level, int n)
 int main()
 {
 	int n;
-	cin >> n;
+	
+	while (1) {
+		cin >> n;
 
-	vector<int> permutation;
-	gen(permutation, 1, n);
-	return 0;
+		if (n == 0) {
+			return 0;
+		}
+
+		base = new int[n]();
+		int *seed = new int[n]();
+		for (int i = 0; i < n; i++) {
+			seed[i] = base[i] = i + 1;
+		}
+
+		permute(seed, 0, n-1);
+
+		cout << endl << endl;
+
+		delete[] base;
+		delete[] seed;
+	}
 }
 
 
